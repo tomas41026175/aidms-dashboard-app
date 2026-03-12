@@ -9,7 +9,12 @@ interface Props {
 export default function ThemeToggle({ mode, onToggle }: Props) {
   return (
     <Tooltip title={mode === 'dark' ? '切換亮色模式' : '切換暗色模式'}>
-      <IconButton onClick={onToggle} size="small" sx={{ color: 'text.secondary' }}>
+      <IconButton
+        onClick={onToggle}
+        size="small"
+        sx={{ color: 'text.secondary' }}
+        aria-label={mode === 'dark' ? '切換亮色模式' : '切換暗色模式'}
+      >
         {mode === 'dark' ? '☀️' : '🌙'}
       </IconButton>
     </Tooltip>

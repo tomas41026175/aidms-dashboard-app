@@ -5,6 +5,7 @@ import {
   CPU_THRESHOLDS,
   MEM_THRESHOLDS,
   DISK_THRESHOLDS,
+  worstDiskUsage,
 } from '../utils/alert-thresholds'
 import type { AlertLevel } from '../utils/alert-thresholds'
 import type { SystemMetrics } from '../types/metrics'
@@ -38,7 +39,7 @@ export default function MetricCards({ latest, cpuAlert, memAlert, diskAlert }: P
       <Grid size={{ xs: 6, sm: 3 }}>
         <MetricGauge
           title="磁碟"
-          value={latest.disk[0]?.usage ?? 0}
+          value={worstDiskUsage(latest)}
           alertLevel={diskAlert}
           thresholds={DISK_THRESHOLDS}
         />

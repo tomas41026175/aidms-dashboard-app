@@ -1,4 +1,6 @@
 import { useMemo } from 'react'
+
+const BACKEND_START_CMD = 'node server.js'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Stack from '@mui/material/Stack'
@@ -50,7 +52,7 @@ export default function Dashboard({ mode, onToggleMode }: Props) {
         {latest == null ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', pt: 8 }}>
             <Typography color="text.secondary">
-              {status === 'error' ? '無法連線至後端伺服器，請確認 node server.js 已啟動' : '正在連線...'}
+              {status === 'error' ? `無法連線至後端伺服器，請確認 ${BACKEND_START_CMD} 已啟動` : '正在連線...'}
             </Typography>
           </Box>
         ) : (

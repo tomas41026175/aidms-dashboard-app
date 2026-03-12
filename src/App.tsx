@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import { createAppTheme } from './theme'
@@ -10,7 +10,7 @@ export default function App() {
     window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark',
   )
 
-  const theme = createAppTheme(mode)
+  const theme = useMemo(() => createAppTheme(mode), [mode])
 
   function toggleMode() {
     setMode(prev => (prev === 'dark' ? 'light' : 'dark'))

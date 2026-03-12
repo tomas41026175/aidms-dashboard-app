@@ -11,6 +11,10 @@ import { formatPercent } from '../utils/format'
 const pulse = keyframes`
   0%, 100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.4); }
   50%       { box-shadow: 0 0 0 8px rgba(248, 113, 113, 0); }
+  @media (prefers-reduced-motion: reduce) {
+    0%, 100% { box-shadow: none; }
+    50%       { box-shadow: none; }
+  }
 `
 
 interface Props {

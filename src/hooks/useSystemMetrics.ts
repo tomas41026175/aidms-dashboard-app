@@ -9,6 +9,13 @@ interface UseSystemMetricsResult {
   status: ConnectionStatus
 }
 
+function parseHistoryPayload(raw: unknown): HistoryPayload | null {
+  if (typeof raw !== 'object' || raw === null) return null
+  const obj = raw as Record<string, unknown>
+  if (!Array.isArray(obj.metrics)) return null
+  return obj as unknown as HistoryPayload
+}
+
 export function useSystemMetrics(): UseSystemMetricsResult {
   const [latest, setLatest] = useState<SystemMetrics | null>(null)
   const [history, setHistory] = useState<SystemMetrics[]>([])
@@ -17,28 +24,26 @@ export function useSystemMetrics(): UseSystemMetricsResult {
   useEffect(() => {
     const es = new EventSource('/api/metrics/stream')
 
-    // 連線時先送歷史，頁面立即有資料（解決 < 2s 需求）
     es.addEventListener('history', (e: MessageEvent) => {
-      const payload = JSON.parse(e.data as string) as HistoryPayload
+      const payload = parseHistoryPayload(JSON.parse(e.data))
+      if (!payload) return
       setHistory(payload.metrics)
       const last = payload.metrics[payload.metrics.length - 1]
       if (last) setLatest(last)
       setStatus('connected')
     })
 
-    // 每 2 秒推送一筆
     es.addEventListener('metrics', (e: MessageEvent) => {
-      const data = JSON.parse(e.data as string) as SystemMetrics
+      const data = JSON.parse(e.data) as SystemMetrics
+      if (typeof data?.cpu?.usage !== 'number') return
       setLatest(data)
       setHistory(prev => {
-        // spread + slice：React 需要新 reference 才觸發 re-render
         const next = [...prev, data]
         return next.length > MAX_POINTS ? next.slice(-MAX_POINTS) : next
       })
       setStatus('connected')
     })
 
-    // EventSource 瀏覽器原生自動重連，不需手動實作
     es.onerror = () => setStatus('error')
 
     return () => {

@@ -8,9 +8,10 @@ interface Props {
   title: string
   labels: string[]
   datasets: Dataset[]
+  yRange?: [number, number]
 }
 
-export default function TrendPanel({ title, labels, datasets }: Props) {
+export default function TrendPanel({ title, labels, datasets, yRange }: Props) {
   return (
     <Card sx={{ height: '100%' }}>
       <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
@@ -25,7 +26,7 @@ export default function TrendPanel({ title, labels, datasets }: Props) {
           datasets={datasets}
           height={180}
           animate={false}
-          yRange={[0, 100]}
+          {...(yRange ? { yRange } : {})}
         />
       </CardContent>
     </Card>

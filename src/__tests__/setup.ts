@@ -49,5 +49,7 @@ vi.stubGlobal('EventSource', MockEventSource)
 export { MockEventSource, instances }
 
 export function getLastEventSource(): MockEventSource {
-  return instances[instances.length - 1]!
+  const es = instances[instances.length - 1]
+  if (!es) throw new Error('No EventSource instance found — did you forget to render a component that calls useSystemMetrics?')
+  return es
 }
