@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "vite",
+    "start": "concurrently -n server,vite -c cyan,magenta \"node server.js\" \"vite\"",
+    "start:frontend": "vite",
+    "start:backend": "node server.js",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
@@ -33,6 +35,7 @@
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/coverage-v8": "^2.1.9",
+    "concurrently": "^9.2.1",
     "jsdom": "^27.0.1",
     "typescript": "^5.7.3",
     "vite": "^6.0.11",
