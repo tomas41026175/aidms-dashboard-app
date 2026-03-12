@@ -10,8 +10,9 @@ const __dirname = dirname(__filename)
 
 const app = express()
 
-// #20: PORT from env
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001
+// #20: PORT from env，parseInt 可能回傳 NaN，加 fallback
+const _parsedPort = parseInt(process.env.PORT ?? '', 10)
+const PORT = Number.isNaN(_parsedPort) ? 3001 : _parsedPort
 
 // #1: CORS 白名單，不開放 *
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS ?? 'http://localhost:5173,http://localhost:3001')
@@ -21,6 +22,11 @@ const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS ?? 'http://localhost:5173,h
 app.use(cors({ origin: ALLOWED_ORIGINS }))
 app.use(express.json())
 
+// #3b: 若部署於 Nginx/Caddy 反向代理後方，需啟用 trust proxy 才能正確取得客戶端 IP
+// 本機開發時 req.ip 為 loopback，無需啟用；生產環境請按代理層數設定：
+//   app.set('trust proxy', 1)   // 一層反向代理
+app.set('trust proxy', false)
+
 // ── Ring Buffer ────────────────────────────────────────────────
 const MAX_HISTORY = 150 // 2s × 150 = 5 分鐘
 
@@ -29,6 +35,7 @@ const history = []
 
 function pushHistory(metric) {
   history.push(metric)
+  // O(n) shift 可接受：MAX_HISTORY=150，操作 < 1μs；若需擴展到萬點級別再換 circular buffer
   if (history.length > MAX_HISTORY) {
     history.shift()
   }
@@ -39,6 +46,7 @@ function pushHistory(metric) {
 const clients = new Set()
 
 // #3: 每個 IP 最多 MAX_CONNECTIONS 個 SSE 連線
+// 5 = 單一使用者多分頁的合理上限；超過通常代表客戶端未正確關閉連線或遭惡意佔用
 const MAX_CONNECTIONS_PER_IP = 5
 /** @type {Map<string, number>} */
 const connectionCount = new Map()
@@ -49,6 +57,7 @@ function sendEvent(res, eventName, data) {
 }
 
 function broadcast(eventName, data) {
+  // Set iteration 允許在迭代中 delete 當前元素（ES2015 spec §23.2.3.6），不影響後續項目
   for (const res of clients) {
     try {
       sendEvent(res, eventName, data)

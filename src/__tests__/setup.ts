@@ -53,3 +53,7 @@ export function getLastEventSource(): MockEventSource {
   if (!es) throw new Error('No EventSource instance found — did you forget to render a component that calls useSystemMetrics?')
   return es
 }
+
+export function resetInstances(): void {
+  instances.length = 0
+}

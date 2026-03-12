@@ -16,6 +16,16 @@ function parseHistoryPayload(raw: unknown): HistoryPayload | null {
   return obj as unknown as HistoryPayload
 }
 
+function isValidMetrics(data: unknown): data is SystemMetrics {
+  if (typeof data !== 'object' || data === null) return false
+  const d = data as Record<string, unknown>
+  if (typeof (d.cpu as Record<string, unknown>)?.usage !== 'number') return false
+  if (typeof (d.memory as Record<string, unknown>)?.usage !== 'number') return false
+  if (!Array.isArray(d.disk)) return false
+  if (typeof (d.network as Record<string, unknown>)?.rxBps !== 'number') return false
+  return true
+}
+
 export function useSystemMetrics(): UseSystemMetricsResult {
   const [latest, setLatest] = useState<SystemMetrics | null>(null)
   const [history, setHistory] = useState<SystemMetrics[]>([])
@@ -34,8 +44,8 @@ export function useSystemMetrics(): UseSystemMetricsResult {
     })
 
     es.addEventListener('metrics', (e: MessageEvent) => {
-      const data = JSON.parse(e.data) as SystemMetrics
-      if (typeof data?.cpu?.usage !== 'number') return
+      const data: unknown = JSON.parse(e.data)
+      if (!isValidMetrics(data)) return
       setLatest(data)
       setHistory(prev => {
         const next = [...prev, data]

@@ -2,7 +2,6 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
-import { useTheme } from '@mui/material/styles'
 import { formatBps } from '../utils/format'
 
 // #16: 網路色系常數，集中管理
@@ -17,8 +16,6 @@ interface Props {
 }
 
 export default function NetworkCard({ rxBps, txBps }: Props) {
-  const theme = useTheme()
-
   return (
     <Card sx={{ height: '100%' }}>
       <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
@@ -31,7 +28,7 @@ export default function NetworkCard({ rxBps, txBps }: Props) {
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mt: 1 }}>
           <Box>
-            <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               ↓ 下載（RX）
             </Typography>
             <Typography
@@ -42,7 +39,7 @@ export default function NetworkCard({ rxBps, txBps }: Props) {
             </Typography>
           </Box>
           <Box>
-            <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               ↑ 上傳（TX）
             </Typography>
             <Typography

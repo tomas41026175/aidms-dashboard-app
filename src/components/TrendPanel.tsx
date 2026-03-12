@@ -26,7 +26,7 @@ export default function TrendPanel({ title, labels, datasets, yRange }: Props) {
           datasets={datasets}
           height={180}
           animate={false}
-          {...(yRange ? { yRange } : {})}
+          yRange={yRange}
         />
       </CardContent>
     </Card>

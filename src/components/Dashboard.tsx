@@ -1,6 +1,4 @@
 import { useMemo } from 'react'
-
-const BACKEND_START_CMD = 'node server.js'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Stack from '@mui/material/Stack'
@@ -19,6 +17,8 @@ import DashboardAppBar from './DashboardAppBar'
 import MetricCards from './MetricCards'
 import TrendCharts from './TrendCharts'
 import DetailPanels from './DetailPanels'
+
+const BACKEND_START_CMD = 'node server.js'
 
 interface Props {
   mode: 'light' | 'dark'

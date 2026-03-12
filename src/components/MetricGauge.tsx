@@ -11,10 +11,6 @@ import { formatPercent } from '../utils/format'
 const pulse = keyframes`
   0%, 100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.4); }
   50%       { box-shadow: 0 0 0 8px rgba(248, 113, 113, 0); }
-  @media (prefers-reduced-motion: reduce) {
-    0%, 100% { box-shadow: none; }
-    50%       { box-shadow: none; }
-  }
 `
 
 interface Props {
@@ -29,12 +25,15 @@ export default function MetricGauge({ title, value, alertLevel, thresholds }: Pr
 
   return (
     <Card
+      aria-live={alertLevel === 'critical' ? 'assertive' : 'off'}
+      aria-atomic="true"
       sx={{
         height: '100%',
         border: '1px solid',
         borderColor: alertLevel === 'normal' ? 'divider' : color.main,
         transition: 'border-color 0.3s ease',
         animation: alertLevel === 'critical' ? `${pulse} 2s ease-out infinite` : 'none',
+        '@media (prefers-reduced-motion: reduce)': { animation: 'none' },
       }}
     >
       <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
