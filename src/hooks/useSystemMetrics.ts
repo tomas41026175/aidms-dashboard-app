@@ -35,12 +35,16 @@ export function useSystemMetrics(): UseSystemMetricsResult {
     const es = new EventSource('/api/metrics/stream')
 
     es.addEventListener('history', (e: MessageEvent) => {
-      const payload = parseHistoryPayload(JSON.parse(e.data))
-      if (!payload) return
-      setHistory(payload.metrics)
-      const last = payload.metrics[payload.metrics.length - 1]
-      if (last) setLatest(last)
-      setStatus('connected')
+      try {
+        const payload = parseHistoryPayload(JSON.parse(e.data))
+        if (!payload) return
+        setHistory(payload.metrics)
+        const last = payload.metrics[payload.metrics.length - 1]
+        if (last) setLatest(last)
+        setStatus('connected')
+      } catch (err) {
+        console.error('[useSystemMetrics] Failed to parse history event:', err)
+      }
     })
 
     es.addEventListener('metrics', (e: MessageEvent) => {
