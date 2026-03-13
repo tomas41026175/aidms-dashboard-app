@@ -44,15 +44,16 @@ export default function MetricGauge({ title, value, alertLevel, thresholds }: Pr
           {title}
         </Typography>
 
-        <Box sx={{ display: 'flex', justifyContent: 'center', my: 1 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1, mb: 2 }}>
           <GaugeChart
             value={value}
             min={0}
             max={100}
             label={title}
-            height={80}
+            height={90}
             color={color.main}
             animate={false}
+            formatValue={() => ''}
           />
         </Box>
 
