@@ -178,11 +178,15 @@ app.use('/api', (_req, res) => {
   res.status(404).json({ error: 'API endpoint not found' })
 })
 
-// ── Static files（production build）───────────────────────────
-app.use(express.static(join(__dirname, 'dist')))
-app.get('*', (_req, res) => {
-  res.sendFile(join(__dirname, 'dist', 'index.html'))
-})
+// ── Static files（production build only）──────────────────────
+import { existsSync } from 'fs'
+const distPath = join(__dirname, 'dist', 'index.html')
+if (existsSync(distPath)) {
+  app.use(express.static(join(__dirname, 'dist')))
+  app.get('*', (_req, res) => {
+    res.sendFile(distPath)
+  })
+}
 
 // ── Polling ────────────────────────────────────────────────────
 async function tick() {
